@@ -29,6 +29,7 @@ import org.junit.internal.ArrayComparisonFailure;
 import org.junit.rules.TestName;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,9 @@ public class AsyncTestBase {
 
 
   protected void setUp() throws Exception {
-    log.info("Starting test: " + this.getClass().getSimpleName() + "#" + name.getMethodName());
+    Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+    long count = threadSet.stream().filter(t -> t.getClass().getName().equals("io.vertx.core.impl.VertxThread")).count();
+    log.info("Starting test: " + this.getClass().getSimpleName() + "#" + name.getMethodName() +  " VertxThread=" + count);
     mainThreadName = Thread.currentThread().getName();
     tearingDown = false;
     waitFor(1);
